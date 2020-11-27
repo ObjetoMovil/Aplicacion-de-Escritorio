@@ -1,0 +1,79 @@
+package gnz.analizadores;
+
+import java_cup.runtime.*;
+import gnz.backend.objetoMovil.MovimientoBase;
+
+parser code 
+{:
+    MovimientoBase movi=new MovimientoBase();
+    public String cadena;
+
+    /**
+     * Método al que se llama automáticamente ante algún error sintactico.
+     **/ 
+    public void syntax_error(Symbol s){ 
+        int fil = (s.right)+1;
+        int col = (s.left)+1;
+        System.out.println("Error Sintáctico en la Línea " + (col) +
+        " Columna "+(fil)+ ". No se esperaba este componente: " +s.value+"."); 
+    } 
+
+    /**
+     * Método al que se llama automáticamente ante algún error sintáctico 
+     * en el que ya no es posible una recuperación de errores.
+     **/ 
+    public void unrecovered_syntax_error(Symbol s) throws java.lang.Exception{ 
+        int fil = (s.right)+1;
+        int col = (s.left)+1;
+        System.out.println("Error síntactico irrecuperable en la Línea " + 
+        (col)+ " Columna "+(fil)+". Componente " + s.value + 
+        " no reconocido."); 
+    }  
+:} 
+
+
+terminal String com, Para, Parc;
+terminal String numerico;
+terminal String RIni, RFin, RTra, RMovA, RMovB, RMovC, RMovD, Radelante, Ratras, Rcm;
+
+
+non terminal S;
+non terminal Integer DIRECCION;
+non terminal LVALORES;
+non terminal String VALOR;
+ 
+//Iniciar
+start with S; 
+
+S::= RIni RTra LVALORES:a RFin RTra{:
+        parser.cadena=""+parser.movi.a[0]+""+parser.movi.a[1]+""+parser.movi.a[2]+""+parser.movi.a[3];
+    :};
+
+LVALORES::=LVALORES:a VALOR:b{:
+    
+    :}
+    |VALOR:a{:
+    
+    :};
+
+
+VALOR::=RMovA Para numerico:a Rcm com numerico:b com DIRECCION:c Parc{:
+        parser.movi.a[0]="<(a)("+a+")("+(3*Integer.parseInt(b))+")("+c+")>";
+    :}
+    |RMovB Para numerico:a Rcm com numerico:b com DIRECCION:c Parc{:
+        parser.movi.a[1]="<(b)("+a+")("+(3*Integer.parseInt(b))+")("+c+")>";
+    :}
+    |RMovC Para numerico:a Rcm com numerico:b com DIRECCION:c Parc{:
+        parser.movi.a[2]="<(c)("+a+")("+(3*Integer.parseInt(b))+")("+c+")>";
+    :}
+    |RMovD Para numerico:a Rcm com numerico:b com DIRECCION:c Parc{:
+        parser.movi.a[3]="<(d)("+a+")("+(3*Integer.parseInt(b))+")("+c+")>";
+    :};
+
+
+DIRECCION::=Radelante{:
+        RESULT=1;
+    :}
+    |Ratras{:
+        RESULT=2;
+    :};

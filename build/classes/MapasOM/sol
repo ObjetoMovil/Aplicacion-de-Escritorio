@@ -1,0 +1,78 @@
+/*Solucion Facil*/
+
+Ini trayecto
+MovRecto(5 cm, 3, abajo)
+MovDiagonal(35 cm, 3, -45 grados)
+MovDiagonal(20 cm, 3, 45 grados)
+MovRecto(105 cm, 3, adelante)
+MovRecto(10 cm, 3, abajo)
+MovDiagonal(100 cm, 3, 208 grados)
+MovRecto(40 cm, 3, atras)
+MovRecto(70 cm, 3, abajo)
+MovRecto(40cm, 3, adelante)
+MovRecto(30cm, 3, arriba)
+MovRecto(60cm, 3, adelante)
+MovRecto(25cm, 3, arriba)
+MovRecto(50 cm, 3, adelante)
+Fin trayecto
+
+
+/*intermedio*/
+Ini trayecto
+MovRecto(7 cm, 3, adelante)
+MovRecto(8 cm, 3, abajo)
+MovRecto(75 cm, 3, adelante)
+MovRecto(30 cm, 3, abajo)
+MovRecto(62 cm, 3, adelante)
+MovRecto(20 cm, 3, abajo)
+MovDiagonal(65 cm, 3, 225 grados)
+MovRecto(55 cm, 3, atras)
+MovRecto(70 cm, 3, abajo)
+MovRecto(122 cm, 3, adelante)
+MovRecto(80 cm, 3, arriba)
+MovRecto(5 cm, 3, adelante)
+Fin trayecto
+
+/*dificil */
+Ini  trayecto 
+MovRecto( 5 cm, 3, adelante)
+MovRecto(30 cm, 2, abajo)
+MovRecto( 40 cm, 3, adelante)
+MovRecto( 25 cm, 3, arriba)
+MovRecto( 40 cm, 3, adelante)
+MovRecto(30 cm, 2, abajo)
+MovRecto( 40 cm, 3, adelante)
+MovRecto( 30 cm, 3, arriba)
+MovRecto( 35 cm, 3, adelante)
+MovRecto(60 cm, 3, abajo)
+MovRecto( 35 cm, 3, atras)
+MovRecto( 50 cm, 3, abajo)
+MovRecto( 45 cm, 3, atras)
+MovRecto( 30 cm, 3, arriba)
+MovRecto( 35 cm, 3, atras)
+MovRecto( 35 cm, 3, abajo)
+MovRecto( 38 cm, 3, atras)
+MovRecto( 25 cm, 3, abajo)
+MovRecto( 15 cm, 3, adelante)
+MovRecto( 25 cm, 3, abajo)
+MovRecto( 70 cm, 3, adelante)
+MovRecto( 25 cm, 3, arriba)
+MovRecto( 75 cm, 3, adelante)
+MovRecto( 35 cm, 3, abajo)
+Fin trayecto
+
+
+/*ejemplo de mov curvo*/
+Ini  trayecto 
+MovRecto(100 cm, 3, abajo)
+MovRecto(100 cm, 3, adelante)
+MovRecto(100 cm, 3, arriba)
+MovRecto(100 cm, 3, atras)
+MovDiagonal(142 cm, 3, -45 grados)
+MovRecto(100 cm, 3, arriba)
+MovDiagonal(142 cm, 3, 225 grados)
+MovCurvo(40 cm, 3, adelante, arriba)
+MovCurvo(40 cm, 3, adelante, abajo)
+MovCurvo(40 cm, 3, atras, arriba)
+MovCurvo(40 cm, 3, atras, abajo)
+Fin trayecto

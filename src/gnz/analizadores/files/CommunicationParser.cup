@@ -1,0 +1,99 @@
+package gnz.analizadores;
+
+import java_cup.runtime.*;
+import gnz.backend.objetoMovil.Movement;
+import gnz.backend.objetoMovil.Movement.MovementType;
+import gnz.backend.objetoMovil.Movement.MotorType;
+import gnz.backend.objetoMovil.Movement.SpeedLevel;
+import gnz.backend.objetoMovil.Movement.Orientation;
+
+parser code 
+{:
+    Movement movement;
+
+    public Movement getMovement(){
+        return movement;
+    }
+
+    public void syntax_error(Symbol s){ 
+        int fil = (s.right)+1;
+        int col = (s.left)+1;
+        System.out.println("Error Sintáctico en la Línea " + (col) +
+        " Columna "+(fil)+ ". No se esperaba este componente: " +s.value+"."); 
+    } 
+
+    public void unrecovered_syntax_error(Symbol s) throws java.lang.Exception{ 
+        int fil = (s.right)+1;
+        int col = (s.left)+1;
+        System.out.println("Error síntactico irrecuperable en la Línea " + 
+        (col)+ " Columna "+(fil)+". Componente " + s.value + 
+        " no reconocido."); 
+    }  
+:} 
+
+
+terminal String  COMMA, PARENTHESISO, PARENTHESISC, MOVEA, MOVEB, MOVEC, MOVED, MOVESTRAIGHT, MOVEDIAGONAL, MOVECURVED, AHEAD, BEHIND, UP, DOWN, SEG, DEGREES;
+terminal Integer INTEGER;
+
+non terminal             move;
+non terminal SpeedLevel  speedValue; 
+non terminal Orientation orientation1, orientation2, straightOrientation;
+non terminal Integer     distanceValue, angleValue;
+ 
+start with move; 
+
+move::=     MOVEA PARENTHESISO distanceValue:distance SEG COMMA speedValue:speed COMMA orientation1:orientation PARENTHESISC                                            {: movement = new Movement(MovementType.BASE, MotorType.MOTORA, speed, distance, orientation); :}
+            | MOVEB PARENTHESISO distanceValue:distance SEG COMMA speedValue:speed COMMA orientation1:orientation PARENTHESISC                                          {: movement = new Movement(MovementType.BASE, MotorType.MOTORB, speed, distance, orientation); :}
+            | MOVEC PARENTHESISO distanceValue:distance SEG COMMA speedValue:speed COMMA orientation1:orientation PARENTHESISC                                          {: movement = new Movement(MovementType.BASE, MotorType.MOTORC, speed, distance, orientation); :}
+            | MOVED PARENTHESISO distanceValue:distance SEG COMMA speedValue:speed COMMA orientation1:orientation PARENTHESISC                                          {: movement = new Movement(MovementType.BASE, MotorType.MOTORD, speed, distance, orientation); :}
+            | MOVESTRAIGHT PARENTHESISO distanceValue:distance SEG COMMA speedValue:speed COMMA straightOrientation:orientation PARENTHESISC                            {: movement = new Movement(MovementType.STRAIGHT, speed, distance, orientation); :}
+            | MOVEDIAGONAL PARENTHESISO distanceValue:distance SEG COMMA speedValue:speed COMMA angleValue:angle DEGREES PARENTHESISC                                   {: movement = new Movement(MovementType.DIAGONAL, speed, distance, angle); :}
+            | MOVECURVED PARENTHESISO distanceValue:radio SEG COMMA speedValue:speed COMMA orientation1:orientation1 COMMA orientation2:orientation2 PARENTHESISC {: movement = new Movement(MovementType.CURVED, radio, speed, orientation1, orientation2); :}
+            ;
+
+distanceValue::=    INTEGER:value 
+                    {:  if(value < 0){
+                            RESULT = 0;
+                        } else {
+                            RESULT = value;
+                        } 
+                    :}
+                    ;
+
+speedValue::=   INTEGER:value
+                {:  switch(value){
+                        case 1: RESULT = SpeedLevel.SPEED1; break;
+                        case 2: RESULT = SpeedLevel.SPEED2; break;
+                        case 3: RESULT = SpeedLevel.SPEED3; break;
+                        default: RESULT = SpeedLevel.SPEED1;break;
+                    }   
+                :}
+                ;
+
+orientation1::=  AHEAD      {: RESULT = Orientation.AHEAD; :}
+                | BEHIND    {: RESULT = Orientation.BEHIND; :}  
+                ;
+
+orientation2::=     UP     {: RESULT = Orientation.UP; :}
+                    | DOWN {: RESULT = Orientation.DOWN; :}
+                    ;
+
+straightOrientation::=  AHEAD       {: RESULT = Orientation.AHEAD; :}
+                        | BEHIND    {: RESULT = Orientation.BEHIND; :}  
+                        | UP        {: RESULT = Orientation.UP; :}
+                        | DOWN      {: RESULT = Orientation.DOWN; :}
+                        ;
+
+angleValue::=   INTEGER:value
+                {:  if(value > 360){
+                        RESULT = 360;
+                    } else if(value < -360){
+                        RESULT = -360;
+                    } else{
+                       RESULT = value;
+                    }
+                :}
+                ;
+
+
+

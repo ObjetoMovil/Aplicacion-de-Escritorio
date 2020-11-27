@@ -1,0 +1,174 @@
+package gnz.analizadores;
+
+import java_cup.runtime.Symbol;
+import java.util.ArrayList;
+import java.util.List;
+import java_cup.runtime.XMLElement;
+import javax.swing.JTextArea;
+import gnz.backend.Objetos.*;
+import java_cup.runtime.XMLElement;
+
+
+parser code {:
+
+	private Estructura estructura;
+	
+	public Estructura getEstructura(){
+		return 	estructura;	
+	}
+        public parser2(Lexico2 lex) {
+            super(lex);
+        }
+
+
+
+  public void syntax_error(Symbol cur_token) {
+        System.out.println("OCURRIO UN ERROR SINTACTICO, FILA: " + cur_token.left + ", COLUMNA: " +cur_token.right + " TOKEN:" +cur_token.value);
+    }    
+	
+:}
+
+
+/* Terminals (tokens returned by the scanner). */
+
+terminal Object MOVERA,MOVERB,MOVERC,MOVERD,INI,FIN,INITRAYECTO,FINTRAYECTO,NUMEROS,PAR_ABIERTO,PAR_CERRADO,COMA;
+terminal Object MOVERADELANTE,MOVERATRAS,MOVERDERECHA,MOVERIZQUIERDA,MOVERARRIBADERECHA,MOVERARRIBAIZQUIERDA,MOVERABAJODERECHA,MOVERABAJOIZQUIERDA,GIRARIZQUIERDA,GIRARDERECHA;
+
+non terminal Object global;
+non terminal Estructura empezar;
+non terminal List<EstructuraIndividual>  cicloMover;
+non terminal List<MoverPrimario>  cicloMoverPrimario;
+non terminal Estructura moverTrayecto, moverTrayectoPrimario;
+non terminal EstructuraIndividual moverGrupo; 
+non terminal EstructuraPrimaria moverPrimario;
+non terminal List<MoverPrimario> estructurasPrimaria,estructuraPrimaria;
+non terminal MoverMotor moverA,moverB,moverC,moverD;
+non terminal MoverPrimario moverAdelante,moverAtras,moverDerecha,moverIzquierda,moverArribaDerecha,moverArribaIzquierda ,moverAbajoDerecha,moverAbajoIzquierda,girarDerecha,girarIzquierda;
+
+non terminal List<MoverMotor> estructura,estructuras;
+
+
+
+
+start with global;
+
+global ::= empezar:e {:System.out.println("TERMINE"); estructura = e;:};
+
+empezar ::= moverTrayecto:e {:RESULT = e;:}| moverTrayectoPrimario:e {:RESULT = e;:} | moverGrupo:e {:RESULT = e;:} | moverPrimario:e {:RESULT = e;:} ;
+
+
+moverPrimario ::= INI estructurasPrimaria:e FIN {: RESULT = new EstructuraPrimaria(e);:} ;
+
+moverTrayecto::= INITRAYECTO cicloMover:e FINTRAYECTO {: RESULT = new EstructuraMultiple(e);:};
+
+moverTrayectoPrimario ::= INITRAYECTO cicloMoverPrimario:e FINTRAYECTO {:RESULT = new EstructuraPrimaria(e);:};
+
+cicloMoverPrimario ::= cicloMoverPrimario:e1 moverPrimario:e2 {:
+e1.add(e2.getLista().get(0));
+RESULT = e1;
+:}
+| moverPrimario:e {:
+RESULT = e.getLista();
+:};
+
+cicloMover::= cicloMover:e1 moverGrupo:e2 {:
+e1.add(e2);
+RESULT = e1;
+:}
+| moverGrupo:e {:
+List<EstructuraIndividual> lista = new ArrayList<>();
+lista.add(e);
+RESULT = lista;
+:};
+
+moverGrupo ::= INI estructuras:e FIN {: RESULT = new EstructuraIndividual(e);:};
+
+estructuras::=   estructuras:e1 estructura:e2 {:
+
+e1.add(e2.get(0));
+RESULT = e1;
+:}
+
+| estructura:e {: 
+	List<MoverMotor> lista = new ArrayList<>();
+	lista.add(e.get(0));
+	RESULT = lista;
+:};
+
+estructura::= moverA:e {:
+List<MoverMotor> lista = new ArrayList<>();
+lista.add(e);
+RESULT = lista;
+:}| moverB:e {:
+List<MoverMotor> lista = new ArrayList<>();
+lista.add(e);
+RESULT = lista;:}| moverC:e {:
+List<MoverMotor> lista = new ArrayList<>();
+lista.add(e);
+RESULT = lista;:}| moverD:e {:List<MoverMotor> lista = new ArrayList<>();
+lista.add(e);
+RESULT = lista;:};
+
+
+estructurasPrimaria ::= estructurasPrimaria:e1 estructuraPrimaria:e2 {:
+e1.add(e2.get(0));
+RESULT = e1;
+:} 
+| estructuraPrimaria:e {:
+List<MoverPrimario> lista = new ArrayList<>();
+	lista.add(e.get(0));
+	RESULT = lista;
+:};
+
+
+estructuraPrimaria ::= moverAdelante:e {:List<MoverPrimario> lista = new ArrayList<>();
+lista.add(e);
+RESULT = lista;:}
+| moverAtras:e {:List<MoverPrimario> lista = new ArrayList<>();
+lista.add(e);
+RESULT = lista;:}
+| moverDerecha:e {:List<MoverPrimario> lista = new ArrayList<>();
+lista.add(e);
+RESULT = lista;:}
+| moverIzquierda:e {:List<MoverPrimario> lista = new ArrayList<>();
+lista.add(e);
+RESULT = lista;:}
+| moverArribaDerecha:e {:List<MoverPrimario> lista = new ArrayList<>();
+lista.add(e);
+RESULT = lista;:}
+| moverArribaIzquierda:e {:List<MoverPrimario> lista = new ArrayList<>();
+lista.add(e);
+RESULT = lista;:}
+| moverAbajoDerecha:e {:List<MoverPrimario> lista = new ArrayList<>();
+lista.add(e);
+RESULT = lista;:}
+| moverAbajoIzquierda:e {:List<MoverPrimario> lista = new ArrayList<>();
+lista.add(e);
+RESULT = lista;:}
+| girarDerecha:e {:List<MoverPrimario> lista = new ArrayList<>();
+lista.add(e);
+RESULT = lista;:}
+| girarIzquierda:e{:List<MoverPrimario> lista = new ArrayList<>();
+lista.add(e);
+RESULT = lista;:};
+
+
+moverA ::= MOVERA PAR_ABIERTO NUMEROS:e1 COMA  NUMEROS:e2 PAR_CERRADO {:RESULT = new MoverMotor("a",Integer.parseInt(e1.toString()), Integer.parseInt(e2.toString()));:};
+moverB ::= MOVERB PAR_ABIERTO NUMEROS:e1 COMA  NUMEROS:e2 PAR_CERRADO {:RESULT = new MoverMotor("b",Integer.parseInt(e1.toString()), Integer.parseInt(e2.toString()));:};
+moverC ::= MOVERC PAR_ABIERTO NUMEROS:e1 COMA  NUMEROS:e2 PAR_CERRADO {:RESULT = new MoverMotor("c",Integer.parseInt(e1.toString()), Integer.parseInt(e2.toString()));:};
+moverD ::= MOVERD PAR_ABIERTO NUMEROS:e1 COMA  NUMEROS:e2 PAR_CERRADO {:RESULT = new MoverMotor("d",Integer.parseInt(e1.toString()), Integer.parseInt(e2.toString()));:};
+
+
+moverAdelante ::= MOVERADELANTE PAR_ABIERTO NUMEROS:e PAR_CERRADO  {:RESULT = new MoverPrimario("adelante", Integer.parseInt(e.toString()));:};
+moverAtras ::= MOVERATRAS PAR_ABIERTO NUMEROS:e PAR_CERRADO {:RESULT = new MoverPrimario("atras", Integer.parseInt(e.toString()));:};
+moverDerecha ::= MOVERDERECHA PAR_ABIERTO NUMEROS:e PAR_CERRADO {:RESULT = new MoverPrimario("derecha", Integer.parseInt(e.toString()));:};
+moverIzquierda ::= MOVERIZQUIERDA PAR_ABIERTO NUMEROS:e PAR_CERRADO {:RESULT = new MoverPrimario("izquierda", Integer.parseInt(e.toString()));:};
+moverArribaDerecha ::= MOVERARRIBADERECHA PAR_ABIERTO NUMEROS:e PAR_CERRADO {:RESULT = new MoverPrimario("arribaDerecha", Integer.parseInt(e.toString()));:};
+moverArribaIzquierda ::= MOVERARRIBAIZQUIERDA PAR_ABIERTO NUMEROS:e PAR_CERRADO {:RESULT = new MoverPrimario("arribaIzquierda", Integer.parseInt(e.toString()));:};
+moverAbajoDerecha ::= MOVERABAJODERECHA PAR_ABIERTO NUMEROS:e PAR_CERRADO {:RESULT = new MoverPrimario("abajoDerecha", Integer.parseInt(e.toString()));:};
+moverAbajoIzquierda ::= MOVERABAJOIZQUIERDA PAR_ABIERTO NUMEROS:e PAR_CERRADO {:RESULT = new MoverPrimario("abajoIzquierda", Integer.parseInt(e.toString()));:};
+girarDerecha ::= GIRARDERECHA PAR_ABIERTO NUMEROS:e PAR_CERRADO {:RESULT = new MoverPrimario("girarDerecha", Integer.parseInt(e.toString()));:};
+girarIzquierda ::= GIRARIZQUIERDA PAR_ABIERTO NUMEROS:e PAR_CERRADO {:RESULT = new MoverPrimario("girarIzquierda", Integer.parseInt(e.toString()));:};
+
+
+
